@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Reproducible Research Week 2 Assignment</title>
+
+<script src="PA1_template_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="PA1_template_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="PA1_template_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="PA1_template_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="PA1_template_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="PA1_template_files/navigation-1.1/tabsets.js"></script>
+<link href="PA1_template_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="PA1_template_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Reproducible Research Week 2 Assignment</h1>
+
+</div>
+
+
+<div id="part-1" class="section level3">
+<h3>Part 1</h3>
+<p><strong>1. Load the data (i.e. read.csv())</strong></p>
+<pre class="r"><code>zipfile_url &lt;- &#39;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip&#39;
+download.file(zipfile_url, destfile = &quot;.\\zip_file.zip&quot;)
+unzip(&#39;zip_file.zip&#39;)
+file_name &lt;- &#39;activity.csv&#39;
+mon_data &lt;- read.csv(file_name)</code></pre>
+<p><strong>The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day. The variables included in this dataset are:</strong><br />
+<strong>- steps: Number of steps taking in a 5-minute interval (missing values are coded as NA)</strong><br />
+<strong>- date: The date on which the measurement was taken in YYYY-MM-DD format</strong><br />
+<strong>- interval: Identifier for the 5-minute interval in which measurement was taken</strong><br />
+<strong>The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.</strong></p>
+<p><strong>2. Process/transform the data (if necessary) into a format suitable for your analysis.</strong><br />
+Create new column with date as a Date object.</p>
+<pre class="r"><code>mon_data$date_d &lt;- as.Date(as.character(mon_data$date))</code></pre>
+</div>
+<div id="part-2" class="section level3">
+<h3>Part 2</h3>
+<p><strong>What is mean total number of steps taken per day?</strong><br />
+<strong>For this part of the assignment, you can ignore the missing values in the dataset.</strong></p>
+<p><strong>1. Calculate the total number of steps taken per day</strong></p>
+<pre class="r"><code>steps_byDay_data &lt;- with(mon_data, tapply(steps, date, sum, na.rm = T)) </code></pre>
+<p>Check that there are 61 rows (days).</p>
+<pre class="r"><code>nrow(steps_byDay_data) </code></pre>
+<pre><code>## [1] 61</code></pre>
+<p><strong>2. Make a histogram of the total number of steps taken each day.</strong></p>
+<pre class="r"><code>hist(steps_byDay_data, breaks=seq(0,22500, 2500), xaxt = &#39;n&#39;, xlab = &quot;Total Steps Taken&quot;, 
+     ylab = &quot;Number of Days&quot;, ylim = range(seq(0,20, 5)), main = &#39;&#39;, col = &#39;powderblue&#39;)
+axis(side=1, at=seq(0,22500, 2500), labels=seq(0,22500, 2500))</code></pre>
+<p><img src="Figures/histogram-1.png" /><!-- --></p>
+<p><strong>3. Calculate and report the mean and median of the total number of steps taken per day.</strong></p>
+<pre class="r"><code>mean_steps &lt;- round(mean(steps_byDay_data), digits = 3)
+median_steps &lt;- round(median(steps_byDay_data), digits = 3)
+mean_steps</code></pre>
+<pre><code>## [1] 9354.23</code></pre>
+<pre class="r"><code>median_steps</code></pre>
+<pre><code>## [1] 10395</code></pre>
+<p>The mean total number of steps per day is 9354.23. The median total number of steps per day is 10395.</p>
+</div>
+<div id="part-3" class="section level3">
+<h3>Part 3</h3>
+<p><strong>What is the average daily activity pattern?</strong><br />
+<strong>1. Make a time series plot (i.e. type = “l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis).</strong></p>
+<pre class="r"><code>steps_byInt_data &lt;- with(mon_data, tapply(steps, interval, mean, na.rm = T)) </code></pre>
+<p>Check that there are 288 rows (1440 minutes in a day, split into 5 minute intervals).</p>
+<pre class="r"><code>nrow(steps_byInt_data) </code></pre>
+<pre><code>## [1] 288</code></pre>
+<p>Create plot.</p>
+<pre class="r"><code>plot(steps_byInt_data, type = &#39;l&#39;, xlab = &#39;Interval Number&#39;, ylab = &#39;Average Number of Steps Taken&#39;)</code></pre>
+<p><img src="Figures/linePlot-1.png" /><!-- --></p>
+<p><strong>2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?</strong></p>
+<pre class="r"><code>max_int &lt;- match(max(steps_byInt_data), steps_byInt_data)
+max_int</code></pre>
+<pre><code>## [1] 104</code></pre>
+<p>The interval with the maximum number of steps, on average, is interval 104.</p>
+</div>
+<div id="part-4" class="section level3">
+<h3>Part 4</h3>
+<p><strong>Note that there are a number of days/intervals where there are missing values (NA). The presence of missing days may introduce bias into some calculations or summaries of the data.</strong></p>
+<p><strong>1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs).</strong></p>
+<pre class="r"><code>missing &lt;- sum(is.na(mon_data$steps))
+missing</code></pre>
+<pre><code>## [1] 2304</code></pre>
+<p>The total number of missing values is 2304.</p>
+<p><strong>2. Devise a strategy for filling in all of the missing values in the dataset.</strong><br />
+The strategy chosen is to use the mean for the 5-minute interval to impute missing data.</p>
+<p><strong>3. Create a new dataset that is equal to the original dataset but with the missing data filled in.</strong></p>
+<pre class="r"><code>mon_data_filled &lt;- mon_data
+for(i in 1:nrow(mon_data_filled)){
+    if(is.na(mon_data_filled$steps[i])){
+        int &lt;- as.character(mon_data_filled$interval[i])
+        num &lt;- steps_byInt_data[[int]]
+        mon_data_filled$steps[i] &lt;- num
+    }
+}</code></pre>
+<p><strong>4. Make a histogram of the total number of steps taken each day.</strong></p>
+<pre class="r"><code>steps_byDay_data2 &lt;- with(mon_data_filled, tapply(steps, date, sum)) </code></pre>
+<p>Check that there are 61 rows (days).</p>
+<pre class="r"><code>nrow(steps_byDay_data2) </code></pre>
+<pre><code>## [1] 61</code></pre>
+<pre class="r"><code>hist(steps_byDay_data2, breaks=seq(0,22500, 2500), xaxt = &#39;n&#39;, xlab = &quot;Total Steps Taken&quot;, 
+     ylab = &quot;Number of Days&quot;, ylim = range(seq(0, 30, 5)), main = &#39;&#39;, col = &#39;powderblue&#39;)
+axis(side=1, at=seq(0,22500, 2500), labels=seq(0,22500, 2500))</code></pre>
+<p><img src="Figures/histogram2-1.png" /><!-- --></p>
+<p><strong>Calculate and report the mean and median total number of steps taken per day.</strong></p>
+<pre class="r"><code>mean_steps2 &lt;- round(mean(steps_byDay_data2), digits = 3)
+median_steps2 &lt;- round(median(steps_byDay_data2), digits = 3)
+mean_steps2</code></pre>
+<pre><code>## [1] 10766.19</code></pre>
+<pre class="r"><code>median_steps2</code></pre>
+<pre><code>## [1] 10766.19</code></pre>
+<p>The mean total number of steps per day is 10766.189. The median total number of steps per day is 10766.189.</p>
+<p><strong>Do these values differ from the estimates from the first part of the assignment?</strong><br />
+The mean number of steps per day with the imputed data is 1411.959 steps more than without the imputed data.<br />
+The median number of steps per day with the with the imputed data is 371.189 steps more than without the imputed data.</p>
+<p><strong>What is the impact of imputing missing data on the estimates of the total daily number of steps?</strong><br />
+The impact of imputing missing data is to increase the estimate of the total daily number of steps.</p>
+</div>
+<div id="part-5" class="section level3">
+<h3>Part 5</h3>
+<p><strong>Are there differences in activity patterns between weekdays and weekends?</strong><br />
+<strong>For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.</strong></p>
+<p><strong>1. Create a new factor variable in the dataset with two levels - “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</strong></p>
+<pre class="r"><code>weekend &lt;- c(&#39;Saturday&#39;,&#39;Sunday&#39;)
+mon_data_filled$day_type &lt;- &#39;&#39;
+for(i in 1:nrow(mon_data_filled)){
+    day &lt;- weekdays(mon_data_filled$date_d[i])
+    if(day %in% weekend){
+        mon_data_filled$day_type[i] &lt;- &#39;weekend&#39;
+    } else {
+        mon_data_filled$day_type[i] &lt;- &#39;weekday&#39;
+    }
+}
+mon_data_filled$day_type &lt;- as.factor(mon_data_filled$day_type) </code></pre>
+<p>Check new variable and data.</p>
+<pre class="r"><code>class(mon_data_filled$day_type)</code></pre>
+<pre><code>## [1] &quot;factor&quot;</code></pre>
+<pre class="r"><code>str(mon_data_filled)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    17568 obs. of  5 variables:
+##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+##  $ date    : Factor w/ 61 levels &quot;2012-10-01&quot;,&quot;2012-10-02&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+##  $ date_d  : Date, format: &quot;2012-10-01&quot; &quot;2012-10-01&quot; ...
+##  $ day_type: Factor w/ 2 levels &quot;weekday&quot;,&quot;weekend&quot;: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<p><strong>2. Make a panel plot containing a time series plot (i.e. type=“l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).</strong></p>
+<p>Subset data set into weekdays and weekends.</p>
+<pre class="r"><code>weekday_data &lt;- subset(mon_data_filled, mon_data_filled$day_type == &#39;weekday&#39;)
+weekday_steps_data &lt;- with(weekday_data, tapply(steps, c(interval), mean, na.rm = T)) 
+
+weekend_data &lt;- subset(mon_data_filled, mon_data_filled$day_type == &#39;weekend&#39;)
+weekend_steps_data &lt;- with(weekend_data, tapply(steps, c(interval), mean, na.rm = T)) </code></pre>
+<p>Check data; nrows should be 288.</p>
+<pre class="r"><code>head(weekday_steps_data)</code></pre>
+<pre><code>##          0          5         10         15         20         25 
+## 2.25115304 0.44528302 0.17316562 0.19790356 0.09895178 1.59035639</code></pre>
+<pre class="r"><code>head(weekend_steps_data)</code></pre>
+<pre><code>##           0           5          10          15          20          25 
+## 0.214622642 0.042452830 0.016509434 0.018867925 0.009433962 3.511792453</code></pre>
+<pre class="r"><code>nrow(weekday_steps_data)</code></pre>
+<pre><code>## [1] 288</code></pre>
+<pre class="r"><code>nrow(weekend_steps_data)</code></pre>
+<pre><code>## [1] 288</code></pre>
+<p>Create plot.</p>
+<pre class="r"><code>par(mfrow=c(1,2))
+plot(weekday_steps_data, type = &#39;l&#39;, xlab = &#39;Interval Number&#39;, ylab = &#39;Average Number of Steps Taken&#39;, 
+     main = &#39;Weekdays&#39;, ylim = c(0,250))
+plot(weekend_steps_data, type = &#39;l&#39;, xlab = &#39;Interval Number&#39;, ylab = &#39;Average Number of Steps Taken&#39;, 
+     main = &#39;Weekends&#39;,ylim = c(0,250))</code></pre>
+<p><img src="Figures/panelPlot-1.png" /><!-- --></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

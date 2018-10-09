@@ -122,7 +122,7 @@ max_int
 ```
 ## [1] 104
 ```
-The interval with the maximum number of steps, on average, is interval 104.
+The interval with the maximum number of steps, on average, is interval 104, which corresponds to minute 835.
 
 ### Part 4 
 **Note that there are a number of days/intervals where there are missing values (NA). The presence of missing days may introduce bias into some calculations or summaries of the data.**

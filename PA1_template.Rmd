@@ -88,7 +88,7 @@ plot(steps_byInt_data, type = 'l', xlab = 'Interval Number', ylab = 'Average Num
 max_int <- match(max(steps_byInt_data), steps_byInt_data)
 max_int
 ```
-The interval with the maximum number of steps, on average, is interval `r max_int`.
+The interval with the maximum number of steps, on average, is interval `r max_int`, which corresponds to minute `r mon_data$interval[104]`.
 
 ### Part 4 
 **Note that there are a number of days/intervals where there are missing values (NA). The presence of missing days may introduce bias into some calculations or summaries of the data.**
